@@ -10,13 +10,38 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _progress;
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+
+    // Fade-in animation for the whole screen
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    );
+    _fadeController.forward();
+
+    // Pulse/breathing glow animation for the logo
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+    _pulseAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+    _pulseController.repeat(reverse: true);
 
     // Initializing the animation controller with a 3-second duration
     _controller = AnimationController(
@@ -25,7 +50,9 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // Creating a tween animation for the progress bar
-    _progress = Tween<double>(begin: 0, end: 1).animate(_controller)
+    _progress = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    )
       ..addListener(() {
         setState(() {}); // Rebuild UI on animation frame
       })
@@ -34,7 +61,12 @@ class _SplashScreenState extends State<SplashScreen>
         if (status == AnimationStatus.completed) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const LoginSignupScreen()),
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => const LoginSignupScreen(),
+              transitionsBuilder: (context, a, secondaryAnimation, c) =>
+                  FadeTransition(opacity: a, child: c),
+              transitionDuration: const Duration(milliseconds: 600),
+            ),
           );
         }
       });
@@ -44,8 +76,10 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    // Dispose controller to prevent memory leaks
+    // Dispose controllers to prevent memory leaks
     _controller.dispose();
+    _pulseController.dispose();
+    _fadeController.dispose();
     super.dispose();
   }
 
@@ -55,19 +89,13 @@ class _SplashScreenState extends State<SplashScreen>
     final isDark = theme.brightness == Brightness.dark;
 
     // Theme-aware colors
-    final bgPrimary = isDark ? const Color(0xFF102213) : Colors.white;
+    final bgPrimary = isDark ? const Color(0xFF0A1A0D) : const Color(0xFFF0FFF4);
     final bgSecondary = isDark
-        ? const Color.fromARGB(38, 19, 236, 55)
-        : const Color.fromARGB(30, 19, 236, 91);
+        ? const Color.fromARGB(50, 19, 236, 55)
+        : const Color.fromARGB(40, 19, 236, 91);
     final circleOverlay = isDark
-        ? const Color(0xFF13ec37).withValues(alpha: 0.05)
-        : const Color(0xFF13EC5B).withValues(alpha: 0.08);
-    final logoContainerBg = isDark
-        ? const Color(0xFF102213).withValues(alpha: 0.5)
-        : Colors.white.withValues(alpha: 0.9);
-    final logoBorder = isDark
-        ? const Color(0xFF13ec37).withValues(alpha: 0.3)
-        : const Color(0xFF13EC5B).withValues(alpha: 0.25);
+        ? const Color(0xFF13ec37).withValues(alpha: 0.08)
+        : const Color(0xFF13EC5B).withValues(alpha: 0.1);
     final titleColor = isDark ? Colors.white : const Color(0xFF1A3A1F);
     final subtitleColor = isDark ? Colors.white60 : const Color(0xFF5A7D5F);
     const accentColor = Color(0xFF13EC5B);
@@ -76,103 +104,172 @@ class _SplashScreenState extends State<SplashScreen>
         : const Color(0xFF13EC5B).withValues(alpha: 0.15);
 
     return Scaffold(
-      body: Container(
-        // Background styling with radial gradient — theme-aware
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.center,
-            radius: 0.7,
-            colors: [bgSecondary, bgPrimary],
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Container(
+          // Background styling with radial gradient — theme-aware
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 0.85,
+              colors: [bgSecondary, bgPrimary],
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            // Decorative background circle
-            Positioned(
-              top: -100,
-              left: -100,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  color: circleOverlay,
-                  borderRadius: BorderRadius.circular(200),
+          child: Stack(
+            children: [
+              // Decorative background circles for depth
+              Positioned(
+                top: -120,
+                left: -120,
+                child: Container(
+                  width: 280,
+                  height: 280,
+                  decoration: BoxDecoration(
+                    color: circleOverlay,
+                    borderRadius: BorderRadius.circular(280),
+                  ),
                 ),
               ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // App Logo Container
-                  Container(
-                    width: 160,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: logoContainerBg,
-                      border: Border.all(color: logoBorder),
-                      borderRadius: BorderRadius.circular(80),
-                      boxShadow: [
-                        BoxShadow(
-                          color: isDark
-                              ? Colors.black.withValues(alpha: 0.3)
-                              : const Color(0xFF13EC5B).withValues(alpha: 0.15),
-                          blurRadius: 20,
-                          spreadRadius: 2,
+              Positioned(
+                bottom: -80,
+                right: -80,
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: circleOverlay,
+                    borderRadius: BorderRadius.circular(200),
+                  ),
+                ),
+              ),
+              // Small floating accent circle
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.15,
+                right: 40,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // App Logo Container with animated glow
+                    AnimatedBuilder(
+                      animation: _pulseAnimation,
+                      builder: (context, child) {
+                        return Container(
+                          width: 160,
+                          height: 160,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(80),
+                            boxShadow: [
+                              BoxShadow(
+                                color: accentColor.withValues(
+                                  alpha: 0.25 * _pulseAnimation.value,
+                                ),
+                                blurRadius: 30 * _pulseAnimation.value,
+                                spreadRadius: 5 * _pulseAnimation.value,
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(80),
+                            child: Image.asset(
+                              'assets/images/app_logo.png',
+                              width: 160,
+                              height: 160,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 28),
+                    // App Name with gradient-like styling
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Color(0xFF13EC5B), Color(0xFF0BCB4E), Colors.white],
+                        stops: [0.0, 0.6, 1.0],
+                      ).createShader(bounds),
+                      child: Text(
+                        'Yoga Mentor',
+                        style: TextStyle(
+                          color: titleColor,
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // App Tagline
+                    Text(
+                      'Your AI-powered yoga guide',
+                      style: TextStyle(
+                        color: subtitleColor,
+                        fontSize: 16,
+                        letterSpacing: 0.5,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    const SizedBox(height: 60),
+
+                    /// 🔥 Animated Progress Indicator section
+                    Column(
+                      children: [
+                        Text(
+                          'Initializing Practice... ${(_progress.value * 100).toInt()}%',
+                          style: TextStyle(
+                            color: subtitleColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: 240,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: LinearProgressIndicator(
+                              value: _progress.value,
+                              backgroundColor: progressBg,
+                              valueColor:
+                                  const AlwaysStoppedAnimation<Color>(accentColor),
+                              minHeight: 7,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    child: const Material(
-                      color: Colors.transparent,
-                      child: Icon(
-                        Icons.self_improvement,
-                        color: accentColor,
-                        size: 80,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // App Name
-                  Text(
-                    'Yoga Mentor',
-                    style: TextStyle(
-                      color: titleColor,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  // App Tagline
-                  const Text(
-                    'Your AI-powered yoga guide',
-                    style: TextStyle(color: accentColor, fontSize: 16),
-                  ),
-                  const SizedBox(height: 60),
-
-                  /// 🔥 Animated Progress Indicator section
-                  Column(
-                    children: [
-                      Text(
-                        'Initializing Practice... ${(_progress.value * 100).toInt()}%',
-                        style: TextStyle(color: subtitleColor),
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: 220,
-                        child: LinearProgressIndicator(
-                          value: _progress.value,
-                          backgroundColor: progressBg,
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                            accentColor,
-                          ),
-                          minHeight: 6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              // Credits text at the bottom
+              Positioned(
+                bottom: 30,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Text(
+                    'App made with ❤️ by Absar, Taha and Eman',
+                    style: TextStyle(
+                      color: subtitleColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
