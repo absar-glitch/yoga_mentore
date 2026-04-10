@@ -4,7 +4,7 @@ class UserProvider with ChangeNotifier {
   String _name = 'Absar';
   String _email = 'absar@example.com';
   String _profileImage = 'assets/images/profile.jpg';
-  bool _isDarkMode = true;
+  bool _isDarkMode = false;
 
   String get name => _name;
   String get email => _email;

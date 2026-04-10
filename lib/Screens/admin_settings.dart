@@ -28,7 +28,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
     final cardColor = theme.cardColor;
     final textColor = isDark ? Colors.white : Colors.black;
     final subtitleColor = isDark ? Colors.grey : Colors.grey[600]!;
-    final accentColor = isDark ? Colors.greenAccent : Colors.green;
+    final accentColor = const Color(0xFF13EC5B);
 
     return Scaffold(
       backgroundColor: bgColor,

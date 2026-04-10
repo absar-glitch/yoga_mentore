@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Creating a tween animation for the progress bar
     _progress = Tween<double>(begin: 0, end: 1).animate(_controller)
       ..addListener(() {
-        setState(() {}); // Rebuild UI on每一帧 animation
+        setState(() {}); // Rebuild UI on animation frame
       })
       ..addStatusListener((status) {
         // Navigate to AuthScreen once animation completes
@@ -51,14 +51,38 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Theme-aware colors
+    final bgPrimary = isDark ? const Color(0xFF102213) : Colors.white;
+    final bgSecondary = isDark
+        ? const Color.fromARGB(38, 19, 236, 55)
+        : const Color.fromARGB(30, 19, 236, 91);
+    final circleOverlay = isDark
+        ? const Color(0xFF13ec37).withValues(alpha: 0.05)
+        : const Color(0xFF13EC5B).withValues(alpha: 0.08);
+    final logoContainerBg = isDark
+        ? const Color(0xFF102213).withValues(alpha: 0.5)
+        : Colors.white.withValues(alpha: 0.9);
+    final logoBorder = isDark
+        ? const Color(0xFF13ec37).withValues(alpha: 0.3)
+        : const Color(0xFF13EC5B).withValues(alpha: 0.25);
+    final titleColor = isDark ? Colors.white : const Color(0xFF1A3A1F);
+    final subtitleColor = isDark ? Colors.white60 : const Color(0xFF5A7D5F);
+    const accentColor = Color(0xFF13EC5B);
+    final progressBg = isDark
+        ? const Color.fromARGB(25, 19, 236, 55)
+        : const Color(0xFF13EC5B).withValues(alpha: 0.15);
+
     return Scaffold(
       body: Container(
-        // Background styling with radial gradient
-        decoration: const BoxDecoration(
+        // Background styling with radial gradient — theme-aware
+        decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.center,
             radius: 0.7,
-            colors: [Color.fromARGB(38, 19, 236, 55), Color(0xFF102213)],
+            colors: [bgSecondary, bgPrimary],
           ),
         ),
         child: Stack(
@@ -71,7 +95,7 @@ class _SplashScreenState extends State<SplashScreen>
                 width: 200,
                 height: 200,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF13ec37).withValues(alpha: 0.05),
+                  color: circleOverlay,
                   borderRadius: BorderRadius.circular(200),
                 ),
               ),
@@ -85,14 +109,14 @@ class _SplashScreenState extends State<SplashScreen>
                     width: 160,
                     height: 160,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF102213).withValues(alpha: 0.5),
-                      border: Border.all(
-                        color: const Color(0xFF13ec37).withValues(alpha: 0.3),
-                      ),
+                      color: logoContainerBg,
+                      border: Border.all(color: logoBorder),
                       borderRadius: BorderRadius.circular(80),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
+                          color: isDark
+                              ? Colors.black.withValues(alpha: 0.3)
+                              : const Color(0xFF13EC5B).withValues(alpha: 0.15),
                           blurRadius: 20,
                           spreadRadius: 2,
                         ),
@@ -102,17 +126,17 @@ class _SplashScreenState extends State<SplashScreen>
                       color: Colors.transparent,
                       child: Icon(
                         Icons.self_improvement,
-                        color: Color(0xFF13ec37),
+                        color: accentColor,
                         size: 80,
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
                   // App Name
-                  const Text(
+                  Text(
                     'Yoga Mentor',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: titleColor,
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
                     ),
@@ -120,7 +144,7 @@ class _SplashScreenState extends State<SplashScreen>
                   // App Tagline
                   const Text(
                     'Your AI-powered yoga guide',
-                    style: TextStyle(color: Color(0xFF13ec37), fontSize: 16),
+                    style: TextStyle(color: accentColor, fontSize: 16),
                   ),
                   const SizedBox(height: 60),
 
@@ -129,21 +153,16 @@ class _SplashScreenState extends State<SplashScreen>
                     children: [
                       Text(
                         'Initializing Practice... ${(_progress.value * 100).toInt()}%',
-                        style: const TextStyle(color: Colors.white60),
+                        style: TextStyle(color: subtitleColor),
                       ),
                       const SizedBox(height: 8),
                       SizedBox(
                         width: 220,
                         child: LinearProgressIndicator(
                           value: _progress.value,
-                          backgroundColor: const Color.fromARGB(
-                            25,
-                            19,
-                            236,
-                            55,
-                          ),
+                          backgroundColor: progressBg,
                           valueColor: const AlwaysStoppedAnimation<Color>(
-                            Color(0xFF13ec37),
+                            accentColor,
                           ),
                           minHeight: 6,
                         ),

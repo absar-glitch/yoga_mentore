@@ -35,63 +35,75 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // Main background gradient for the auth screen - Background ka gradient style
+        // Background image for the auth screen — attractive yoga image
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF102213), Color(0xFF19331E)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+          image: DecorationImage(
+            image: AssetImage('assets/images/yoga_login_bg.png'),
+            fit: BoxFit.cover,
           ),
         ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              width: 380,
-              padding: const EdgeInsets.all(24),
-              margin: const EdgeInsets.symmetric(vertical: 30),
-              decoration: BoxDecoration(
-                color: const Color(0xFF162D1B),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.4),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // App ka Name/Logo
-                  const Text(
-                    "Yoga Mentor",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
+        child: Container(
+          // Semi-transparent overlay taake form readable rahe
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.black.withValues(alpha: 0.55),
+                Colors.black.withValues(alpha: 0.7),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Container(
+                width: 380,
+                padding: const EdgeInsets.all(24),
+                margin: const EdgeInsets.symmetric(vertical: 30),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF162D1B).withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.4),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Conditionally show either Login or Signup form - Login ya Signup form dikhana
-                  isLogin ? _loginForm() : _signupForm(),
-                  const SizedBox(height: 20),
-                  // Toggle button to switch between Login and Signup - View switch krne ka button
-                  GestureDetector(
-                    onTap: () {
-                      setState(() => isLogin = !isLogin);
-                    },
-                    child: Text(
-                      isLogin
-                          ? "Don’t have an account? Sign Up"
-                          : "Already have an account? Sign In",
-                      style: const TextStyle(
-                        color: Color(0xFF13ec37),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // App ka Name/Logo
+                    const Text(
+                      "Yoga Mentor",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    // Conditionally show either Login or Signup form - Login ya Signup form dikhana
+                    isLogin ? _loginForm() : _signupForm(),
+                    const SizedBox(height: 20),
+                    // Toggle button to switch between Login and Signup - View switch krne ka button
+                    GestureDetector(
+                      onTap: () {
+                        setState(() => isLogin = !isLogin);
+                      },
+                      child: Text(
+                        isLogin
+                            ? "Don't have an account? Sign Up"
+                            : "Already have an account? Sign In",
+                        style: const TextStyle(
+                          color: Color(0xFF13EC5B),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -223,7 +235,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF13ec37),
+          backgroundColor: const Color(0xFF13EC5B),
           foregroundColor: const Color(0xFF102213),
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
@@ -254,7 +266,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       validator: validator,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: const Color(0xFF13ec37)),
+        prefixIcon: Icon(icon, color: const Color(0xFF13EC5B)),
         suffixIcon: toggle != null
             ? IconButton(
                 icon: Icon(
@@ -272,7 +284,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        errorStyle: const TextStyle(color: Color(0xFF13ec37)),
+        errorStyle: const TextStyle(color: Color(0xFF13EC5B)),
       ),
     );
   }

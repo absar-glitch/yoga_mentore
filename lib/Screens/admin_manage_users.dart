@@ -12,7 +12,7 @@ class AdminManageUsersPage extends StatelessWidget {
     final cardColor = theme.cardColor;
     final textColor = isDark ? Colors.white : Colors.black;
     final subtitleColor = isDark ? Colors.grey : Colors.grey[600]!;
-    final accentColor = isDark ? Colors.greenAccent : Colors.green;
+    final accentColor = const Color(0xFF13EC5B);
     final hintColor = isDark ? Colors.white38 : Colors.grey;
 
     return Scaffold(

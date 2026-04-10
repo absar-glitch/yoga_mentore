@@ -14,7 +14,7 @@ class AdminDashboard extends StatefulWidget {
 
 class _AdminDashboardState extends State<AdminDashboard> {
   int _currentIndex = 0;
-  bool _isDarkMode = true; // Admin pages ka apna theme — default dark
+  bool _isDarkMode = false; // Admin pages ka apna theme — default light
 
   void _toggleTheme(bool value) {
     setState(() {
@@ -27,19 +27,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
     // Admin pages ke liye alag theme — sirf admin pages par apply hoga
     final adminTheme = _isDarkMode
         ? ThemeData.dark().copyWith(
-            primaryColor: Colors.greenAccent,
+            primaryColor: const Color(0xFF13EC5B),
             scaffoldBackgroundColor: const Color(0xFF102213),
             appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF102213)),
-            cardColor: const Color(0xFF1a2e1d),
+            cardColor: const Color(0xFF19331E),
           )
         : ThemeData.light().copyWith(
-            primaryColor: Colors.green,
-            scaffoldBackgroundColor: Colors.grey[100],
-            appBarTheme: AppBarTheme(
-              backgroundColor: Colors.grey[100],
+            primaryColor: const Color(0xFF13EC5B),
+            scaffoldBackgroundColor: Colors.white,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
               foregroundColor: Colors.black,
             ),
-            cardColor: Colors.white,
+            cardColor: Colors.grey[100],
           );
 
     return Theme(
@@ -83,8 +83,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
               _currentIndex = index;
             });
           },
-          backgroundColor: _isDarkMode ? const Color(0xFF1a2e1d) : Colors.white,
-          selectedItemColor: _isDarkMode ? Colors.greenAccent : Colors.green,
+          backgroundColor: _isDarkMode ? const Color(0xFF19331E) : Colors.white,
+          selectedItemColor: const Color(0xFF13EC5B),
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
           items: const [
@@ -125,9 +125,7 @@ class _DashboardOverview extends StatelessWidget {
     final subtitleColor = theme.brightness == Brightness.dark
         ? Colors.grey
         : Colors.grey[600]!;
-    final accentColor = theme.brightness == Brightness.dark
-        ? Colors.greenAccent
-        : Colors.green;
+    final accentColor = const Color(0xFF13EC5B);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
