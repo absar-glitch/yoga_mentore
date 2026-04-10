@@ -14,6 +14,8 @@ class _PoseLibraryPageState extends State<PoseLibraryPage> {
   // Controllers for scrolling and search
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+  int _selectedCategoryIndex = 0;
+
 
   // Keys for each category section
   final GlobalKey _beginnerKey = GlobalKey();
@@ -319,9 +321,12 @@ class _PoseLibraryPageState extends State<PoseLibraryPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         itemCount: categories.length,
         itemBuilder: (context, index) {
-          bool isActive = index == 0;
+          bool isActive = _selectedCategoryIndex == index;
           return GestureDetector(
             onTap: () {
+              setState(() {
+                _selectedCategoryIndex = index;
+              });
               if (categories[index] == 'Beginner') {
                 _scrollToSection(_beginnerKey);
               } else if (categories[index] == 'Intermediate') {
@@ -364,6 +369,7 @@ class _PoseLibraryPageState extends State<PoseLibraryPage> {
       ),
     );
   }
+
 
   Widget _buildPoseCard(
     BuildContext context,
