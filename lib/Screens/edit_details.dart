@@ -57,11 +57,12 @@ class _EditDetailsPageState extends State<EditDetailsPage> {
             _buildInput('Bio', _bioController, theme),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
-                userProvider.updateUserDetails(
+              onPressed: () async {
+                await userProvider.updateUserDetails(
                   _nameController.text,
                   _emailController.text,
                 );
+                if (!context.mounted) return;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Changes saved successfully!')),

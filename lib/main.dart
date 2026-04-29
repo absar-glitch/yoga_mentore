@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_mentore/Providers/user_provider.dart';
+import 'package:yoga_mentore/database/db_helper.dart';
 import 'package:yoga_mentore/Screens/splash.dart';
 import 'package:yoga_mentore/Screens/loginsignup.dart';
 import 'package:yoga_mentore/Screens/userprofile.dart';
@@ -9,8 +10,14 @@ import 'package:yoga_mentore/Screens/main_layout.dart';
 import 'package:yoga_mentore/Screens/progresspage.dart';
 import 'package:yoga_mentore/Screens/real_time.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize DB on startup so admin seed runs before any screen loads
+  try {
+    await DBHelper.database;
+  } catch (e) {
+    print("Database initialization failed: $e");
+  }
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => UserProvider())],

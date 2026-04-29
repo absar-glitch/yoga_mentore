@@ -232,7 +232,12 @@ class _YogaProfilePageState extends State<YogaProfilePage> {
                   const SizedBox(height: 50),
                   Center(
                     child: InkWell(
-                      onTap: () {
+                      onTap: () async {
+                        await Provider.of<UserProvider>(
+                          context,
+                          listen: false,
+                        ).logout();
+                        if (!context.mounted) return;
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

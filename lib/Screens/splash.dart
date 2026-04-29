@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:yoga_mentore/Providers/user_provider.dart';
 import 'package:yoga_mentore/Screens/loginsignup.dart';
+import 'package:yoga_mentore/Screens/main_layout.dart';
+import 'package:yoga_mentore/Screens/admin_dashboard.dart';
 
 /// Animated splash screen that appears when the app starts
 class SplashScreen extends StatefulWidget {
@@ -56,13 +60,27 @@ class _SplashScreenState extends State<SplashScreen>
       ..addListener(() {
         setState(() {}); // Rebuild UI on animation frame
       })
-      ..addStatusListener((status) {
+      ..addStatusListener((status) async {
         // Navigate to AuthScreen once animation completes
         if (status == AnimationStatus.completed) {
+          final userProvider = Provider.of<UserProvider>(
+            context,
+            listen: false,
+          );
+          final loggedIn = await userProvider.tryAutoLogin();
+          if (!mounted) return;
+          Widget destination;
+          if (loggedIn && userProvider.isAdmin) {
+            destination = const AdminDashboard();
+          } else if (loggedIn) {
+            destination = const MainLayout();
+          } else {
+            destination = const LoginSignupScreen();
+          }
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const LoginSignupScreen(),
+              pageBuilder: (context, animation, secondaryAnimation) => destination,
               transitionsBuilder: (context, a, secondaryAnimation, c) =>
                   FadeTransition(opacity: a, child: c),
               transitionDuration: const Duration(milliseconds: 600),
